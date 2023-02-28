@@ -1,0 +1,11 @@
+/target
+
+.idea
+
+# Environment variables file
+.env
+.env.test
+.env*.local
+.env.json
+.env.test.json
+.env*.local.json

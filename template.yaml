@@ -1,0 +1,84 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  aws-rust-poc
+
+  Sample SAM Template for aws-rust-poc
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 3
+    Tracing: Active
+  Api:
+    TracingEnabled: true
+Parameters:
+  EnvName:
+    Type: String
+    Description: Name of an environment. 'dev', 'staging', 'prod' and any name.
+    AllowedPattern: ^.*[^0-9]$
+    ConstraintDescription: Must end with non-numeric character.
+Resources:
+  SamAppRustApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: !Ref EnvName
+  PingFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: target/lambda/ping/
+      Handler: bootstrap.is.the.handler
+      Runtime: provided.al2
+      Architectures: [ "arm64" ]
+      Events:
+        Ping:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /ping
+            Method: get
+            RestApiId: !Ref SamAppRustApi
+  ApplicationResourceGroup:
+    Type: AWS::ResourceGroups::Group
+    Properties:
+      Name:
+        Fn::Join:
+          - ''
+          - - ApplicationInsights-SAM-
+            - Ref: AWS::StackName
+      ResourceQuery:
+        Type: CLOUDFORMATION_STACK_1_0
+    Metadata:
+      SamResourceId: ApplicationResourceGroup
+  ApplicationInsightsMonitoring:
+    Type: AWS::ApplicationInsights::Application
+    Properties:
+      ResourceGroupName:
+        Fn::Join:
+          - ''
+          - - ApplicationInsights-SAM-
+            - Ref: AWS::StackName
+      AutoConfigurationEnabled: 'true'
+    DependsOn: ApplicationResourceGroup
+    Metadata:
+      SamResourceId: ApplicationInsightsMonitoring
+Outputs:
+  SamAppRustApi:
+    Description: API Gateway endpoint URL for SamAppRustApi
+    Value:
+      !Join
+      - ''
+      - - 'https://'
+        - !Ref SamAppRustApi
+        - '.execute-api.'
+        - !Ref AWS::Region
+        - '.amazonaws.com/'
+        - !Sub '${SamAppRustApi.Stage}'
+        - '/ping/'
+  PingFunction:
+    Description: Ping Lambda Function ARN
+    Value:
+      !Sub "HelloWorldFunction${EnvName}"
+  PingFunctionIamRole:
+    Description: Implicit IAM Role created for Ping function
+    Value:
+      !Sub "PingFunction{EnvName}"

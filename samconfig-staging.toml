@@ -1,0 +1,13 @@
+version = 0.1
+[default]
+[default.deploy]
+[default.deploy.parameters]
+s3_bucket = "aws-rust-poc-samstackdeploy-staging"
+stack_name = "aws-rust-poc-samstack-staging"
+region = "us-west-2"
+confirm_changeset = true
+capabilities = "CAPABILITY_IAM"
+image_repositories = []
+profile = "aws-rust-poc"
+disable_rollback = true
+parameter_overrides = "EnvName=staging"
