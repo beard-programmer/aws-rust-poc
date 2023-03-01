@@ -16,13 +16,13 @@ async fn main() -> Result<(), Error> {
     Ok(())
 }
 
-#[derive(Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, serde::Serialize)]
 struct MyBody {
     pub recruiters: Vec<Recruiter>,
     pub response: String,
 }
 
-#[derive(Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, sqlx::FromRow, serde::Serialize)]
 struct Recruiter {
     pub name: String,
     pub last_name: String,
@@ -30,14 +30,10 @@ struct Recruiter {
 }
 
 async fn ping_db(_request: Request, pool: &Pool<MySql>) -> Result<Response<Body>, Error> {
-    let recruiters = sqlx::query_as!(
-        Recruiter,
-        "
-SELECT r.name, r.last_name, r.email FROM recruiter AS r
-LIMIT 10
-        "
+    let recruiters = sqlx::query_as::<_, Recruiter>(
+        "SELECT r.name, r.last_name, r.email FROM recruiter AS r LIMIT 10",
     )
-    .fetch_all(pool) // -> Vec<Recruiter>
+    .fetch_all(pool)
     .await?;
 
     let body = MyBody {
