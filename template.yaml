@@ -23,8 +23,8 @@ Resources:
     Type: AWS::Serverless::Api
     Properties:
       StageName: !Ref EnvName
-  PingFunction:
-    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+  PingLambda:
+    Type: AWS::Serverless::Function
     Properties:
       CodeUri: target/lambda/ping/
       Handler: bootstrap.is.the.handler
@@ -62,8 +62,8 @@ Resources:
     Metadata:
       SamResourceId: ApplicationInsightsMonitoring
 Outputs:
-  SamAppRustApi:
-    Description: API Gateway endpoint URL for SamAppRustApi
+  PingEndpoint:
+    Description: API Gateway endpoint URL for PingLambda
     Value:
       !Join
       - ''
@@ -77,7 +77,7 @@ Outputs:
   PingFunction:
     Description: Ping Lambda Function ARN
     Value:
-      !Sub "HelloWorldFunction${EnvName}"
+      !Sub "PingFunction{EnvName}"
   PingFunctionIamRole:
     Description: Implicit IAM Role created for Ping function
     Value:
