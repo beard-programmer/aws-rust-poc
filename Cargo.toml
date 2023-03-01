@@ -16,11 +16,17 @@ edition = "2021"
 
 [[bin]]
 name = "ping"
+[[bin]]
+name = "ping_db"
 
 [dependencies]
 lambda_http = "0.7.3"
 lambda_runtime = "0.7.3"
+serde = { version = "1.0.152", features = ["derive"] }
+serde_json = "1.0.93"
+sqlx = { version = "0.6.2", features = ["macros", "sqlx-macros", "mysql", "runtime-tokio-rustls"] }
 tokio = { version = "1.25.0", features = ["full"] }
+
 
 [dev-dependencies]
 #aws-smithy-http = "0.52.0"

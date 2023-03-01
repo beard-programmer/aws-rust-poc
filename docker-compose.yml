@@ -1,0 +1,25 @@
+version: '3.8'
+services:
+  mysql_db:
+    image: arm64v8/mysql:oracle
+    restart: unless-stopped
+    environment:
+      MYSQL_RANDOM_ROOT_PASSWORD: "true"
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_DATABASE}
+    ports:
+      - '${DB_PORT}:3306'
+    expose:
+      - '${DB_PORT}'
+    volumes:
+      - .docker/setup.sql.template:/docker-entrypoint-initdb.d/setup.sql.template
+      - mysql_data:/var/lib/mysql
+    networks:
+      - network
+volumes:
+  mysql_data:
+    driver: local
+networks:
+  network:
+    driver: bridge
