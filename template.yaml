@@ -24,9 +24,25 @@ Mappings:
     dev:
       DatabaseUrl: ''
     staging:
-      DatabaseUrl: ''
+      DatabaseUrl: '{{resolve:ssm:alana-auroradb-dev}}'
     prod:
-      DatabaseUrl: ''
+      DatabaseUrl: '{{resolve:ssm:alana-auroradb-prod}}'
+  VpcConfigs:
+    dev:
+      SecurityGroupIds:
+        - AWS::NoValue
+      SubnetIds:
+        - AWS::NoValue
+    staging:
+      SecurityGroupIds:
+        - sg-0d47cafade807bc33
+      SubnetIds:
+        - subnet-2b511c52
+    prod:
+      SecurityGroupIds:
+        - sg-0f0aac8dbce34ab1e
+      SubnetIds:
+        - subnet-99541de0
 Resources:
   SamAppRustApi:
     Type: AWS::Serverless::Api
@@ -63,6 +79,9 @@ Resources:
       Environment:
         Variables:
           DATABASE_URL: !FindInMap [ EnvironmentVariables, !Ref EnvName, DatabaseUrl ]
+      VpcConfig:
+        SecurityGroupIds: !FindInMap [ VpcConfigs, !Ref EnvName, SecurityGroupIds ]
+        SubnetIds: !FindInMap [ VpcConfigs, !Ref EnvName, SubnetIds ]
   ApplicationResourceGroup:
     Type: AWS::ResourceGroups::Group
     Properties:
