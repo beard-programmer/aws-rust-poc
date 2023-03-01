@@ -1,42 +1,47 @@
 use lambda_http::aws_lambda_events::serde_json;
 use lambda_http::{service_fn, Body, Error, Request, Response};
-use sqlx::{Connection, Executor, MySqlConnection};
+use sqlx::mysql::MySqlPoolOptions;
+use sqlx::{MySql, Pool};
 use std::env;
-use std::sync::Arc;
-use tokio::sync::RwLock;
-
-type DbConnectionHandle = Arc<RwLock<MySqlConnection>>;
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {
     let db_url = env::var("DATABASE_URL").expect("DATABASE_URL IS NOT PROVIDED");
-    let db_connection_handle: DbConnectionHandle =
-        Arc::new(RwLock::new(MySqlConnection::connect(&db_url).await?));
-    lambda_http::run(service_fn(|request: Request| {
-        ping_db(request, db_connection_handle.clone())
-    }))
-    .await?;
+    let pool = MySqlPoolOptions::new()
+        .max_connections(1)
+        .connect(db_url.as_str())
+        .await?;
+    lambda_http::run(service_fn(|request: Request| ping_db(request, &pool))).await?;
 
     Ok(())
 }
 
 #[derive(Debug, serde::Serialize, serde::Deserialize)]
 struct MyBody {
-    pub rows_affected: u64,
+    pub recruiters: Vec<Recruiter>,
     pub response: String,
 }
 
-async fn ping_db(
-    _request: Request,
-    db_connection_handle: DbConnectionHandle,
-) -> Result<Response<Body>, Error> {
-    let mut db = db_connection_handle.write().await;
-    let result = db
-        .execute(sqlx::query("SELECT * FROM recruiter LIMIT 1"))
-        .await?;
-    let rows_affected = result.rows_affected();
+#[derive(Debug, serde::Serialize, serde::Deserialize)]
+struct Recruiter {
+    pub name: String,
+    pub last_name: String,
+    pub email: String,
+}
+
+async fn ping_db(_request: Request, pool: &Pool<MySql>) -> Result<Response<Body>, Error> {
+    let recruiters = sqlx::query_as!(
+        Recruiter,
+        "
+SELECT r.name, r.last_name, r.email FROM recruiter AS r
+LIMIT 10
+        "
+    )
+    .fetch_all(pool) // -> Vec<Recruiter>
+    .await?;
+
     let body = MyBody {
-        rows_affected,
+        recruiters,
         response: String::from("Pong"),
     };
     let res = serde_json::to_string(&body)?;
