@@ -44,10 +44,18 @@ Mappings:
       SubnetIds:
         - subnet-99541de0
 Resources:
-  SamAppRustApi:
+  AwsRustPocApi:
     Type: AWS::Serverless::Api
     Properties:
       StageName: !Ref EnvName
+      Name: !Sub "AwsRustPocApi-${EnvName}"
+      Auth:
+        DefaultAuthorizer: RecruiterCognitoAuth # OPTIONAL
+        Authorizers:
+          RecruiterCognitoAuth:
+            UserPoolArn: arn:aws:cognito-idp:us-west-2:524471632441:userpool/us-west-2_U87MvYGL8 # Can also accept an array
+            Identity: # OPTIONAL
+              Header: Authorization # OPTIONAL; Default: 'Authorization'
   PingLambda:
     Type: AWS::Serverless::Function
     Properties:
@@ -61,7 +69,9 @@ Resources:
           Properties:
             Path: /ping
             Method: get
-            RestApiId: !Ref SamAppRustApi
+            RestApiId: !Ref AwsRustPocApi
+            Auth:
+              Authorizer: NONE
   PingDbLambda:
     Type: AWS::Serverless::Function
     Properties:
@@ -75,7 +85,9 @@ Resources:
           Properties:
             Path: /ping-db
             Method: get
-            RestApiId: !Ref SamAppRustApi
+            RestApiId: !Ref AwsRustPocApi
+            Auth:
+              Authorizer: RecruiterCognitoAuth
       Environment:
         Variables:
           DATABASE_URL: !FindInMap [ EnvironmentVariables, !Ref EnvName, DatabaseUrl ]
@@ -113,11 +125,11 @@ Outputs:
       !Join
       - ''
       - - 'https://'
-        - !Ref SamAppRustApi
+        - !Ref AwsRustPocApi
         - '.execute-api.'
         - !Ref AWS::Region
         - '.amazonaws.com/'
-        - !Sub '${SamAppRustApi.Stage}'
+        - !Sub '${AwsRustPocApi.Stage}'
         - '/ping/'
   PingLambdaName:
     Description: Ping Lambda Function Name
@@ -129,11 +141,11 @@ Outputs:
       !Join
       - ''
       - - 'https://'
-        - !Ref SamAppRustApi
+        - !Ref AwsRustPocApi
         - '.execute-api.'
         - !Ref AWS::Region
         - '.amazonaws.com/'
-        - !Sub '${SamAppRustApi.Stage}'
+        - !Sub '${AwsRustPocApi.Stage}'
         - '/ping-db/'
   PingDdLambdaName:
     Description: PingDb Lambda Function Name
