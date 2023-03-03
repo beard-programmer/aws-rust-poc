@@ -2,6 +2,8 @@
 name = "aws-rust-poc"
 version = "0.1.0"
 edition = "2021"
+authors = ["Viktor Shinkevich <supostatekx@gmail.com>"]
+rust-version = "1.67.1"
 
 # Starting in Rust 1.62 you can use `cargo add` to add dependencies 
 # to your project.
