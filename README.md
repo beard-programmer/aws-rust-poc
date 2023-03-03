@@ -189,7 +189,7 @@ docker compose down -v
 </details>
 
 ### Importing DB dump
-Next you need to import dump from development/stating environment.
+Next you need to import dump from development/staging environment.
 1. Download dump from bastion or ask SRE for it.
 2. After receiving dump copy it to the container:
     ```bash
@@ -200,7 +200,7 @@ Next you need to import dump from development/stating environment.
    docker logs aws-rust-poc-mysql_db-1 2>&1 | grep GENERATED
    $ GENERATED ROOT PASSWORD: 2CB0A6A3eWgQHtJiVtRAMCd5r/XheLE1
    ```
-   Copy this password to clilboard.
+   Copy this password to clipboard.
 4. Open bash inside container and import DB using mysql client:
     ```bash
    docker exec -it aws-rust-poc-mysql_db-1 /bin/bash
@@ -210,8 +210,9 @@ Next you need to import dump from development/stating environment.
 <details>
 <summary>While still in docker container, verify sucessfull import:</summary>
 
+Connect to db via mysql client.
 ```bash
-mysql -uzuka -pzuka # Connect to db via mysql client.
+mysql -uzuka -pzuka
 ```
 You should see `zuka` there:
 ```SQL
@@ -225,8 +226,8 @@ SHOW TABLES;
 </details>
 
 ### Running application
-Serverless application consists of API gateway, which are http endpoinds and lambda functions that are being invoked (triggered) by API gateway and DB that is being used by functions.
-SAM gives us ability to do both in local environment - invoking lambdas and running HTTP server that acts as API gateway.
+Our POC Serverless application consists of API gateway, which are http endpoinds and lambda functions that are being invoked (triggered) by API gateway and DB that is being used by functions.
+SAM CLI gives us ability to do both in local environment - invoking lambdas and running HTTP server that acts as API gateway.
 For both we need to set up local env variables.
 #### Set up local env variables file
 ```bash
@@ -235,7 +236,7 @@ cp .env.json.dist .env.sam.local.json
 #### Invoke single lambda
 General command looks like this
 ```
-sam local invoke <LambdaName> --host localhost --port 9001 --env-vars .env.sam.local.json
+sam local invoke <LambdaName> --env-vars .<env-var-file-name>.json
 ```
 List of lambdas can be found in `template.yaml` under `Resources` section with `**Lambda` name pattern.
 For instance
