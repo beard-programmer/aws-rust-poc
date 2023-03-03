@@ -195,8 +195,8 @@ $ cp .env.json.dist .env.sam.local.json
 ```
 #### Invoke single lambda
 General command looks like this
-```bash
-# sam local invoke <LambdaName> --host localhost --port 9001 --env-vars .env.sam.local.json
+```
+$ sam local invoke <LambdaName> --host localhost --port 9001 --env-vars .env.sam.local.json
 ```
 List of lambdas can be found in `template.yaml` under `Resources` section with `**Lambda` name pattern.
 For instance
@@ -219,42 +219,30 @@ $ curl http://localhost:9001/ping-db
 
 
 ## Deployment
+For deployment of the changes currently we use SAM CLI.
+The flow looks like this:
+1. Compile application
+2. Validate SAM template
+3. Deploy to required stage.
 
-Now you can 
-### Run DB
-
-### To run invoke specific lambda locally
-```
-sam local invoke <LambdaName>
-```
+### Compile
 ```bash
-$ sam local invoke PingLambda
+make build
 ```
-
-### Start local webserver
+### Validate template
 ```bash
-$ sam local start-api --host localhost --port 9001 --env-vars .env.sam.local.json
+$ sam validate --profile aws-rust-poc --lint
 ```
-http://localhost:3000/ping
-
-### Deploy to specific stage
-In order to deploy we need to make sure the SAM template is valid.
-To do so we need to run validation command and pass the profile which would be used for validation of CloudFormation.
+If there are some errors or suggestions please fix them.
+### Deploy
+```
+$ sam deploy --config-file samconfig-<stage-name>.toml
+```
+#### Staging
 ```bash
-sam validate --profile sam-cli-poc --lint
+$ sam deploy --config-file samconfig-staging.toml
 ```
-After fixing errors and linting warnings we can start deployment. Deployment goes with passing the stand file that includes configurations.
-```
-sam deploy --config-file samconfig-<stand-name>.toml
-```
-#### Example: deploy to staging
-
+#### Prod
 ```bash
-sam deploy --config-file samconfig-staging.toml
-```
-
-#### Example: deploy to prod
-
-```bash
-sam deploy --config-file samconfig-prod.toml
+$ sam deploy --config-file samconfig-prod.toml
 ```
