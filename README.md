@@ -207,19 +207,23 @@ Next you need to import dump from development/stating environment.
    # Replace <ROOT_PASSWORD> with password you acquired from logs on the previous step.
    $ mysql -uroot -p<ROOT_PASSWORD> zuka < <name-of-dump>.sql
     ```
-5. While you there, you could verify that import was successfull:
-    ```bash
-   $ mysql -uzuka -pzuka # Connect to db via mysql client.
-    ```
-   ```sql
-   SHOW DATABASES;
-   ```
-   You should see `zuka` there.
-    ```sql
-   USE ZUKA;
-   SHOW TABLES;
-   ```
-   You should see a list of tables.
+<details>
+<summary>While still in docker container, verify sucessfull import:</summary>
+
+```bash
+$ mysql -uzuka -pzuka # Connect to db via mysql client.
+```
+You should see `zuka` there:
+```SQL
+SHOW DATABASES;
+```
+You should see a list of tables:
+```SQL
+USE ZUKA;
+SHOW TABLES; 
+```
+</details>
+
 ### Running application
 Serverless application consists of API gateway, which are http endpoinds and lambda functions that are being invoked (triggered) by API gateway and DB that is being used by functions.
 SAM gives us ability to do both in local environment - invoking lambdas and running HTTP server that acts as API gateway.
