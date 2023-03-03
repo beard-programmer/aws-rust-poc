@@ -1,13 +1,6 @@
 # Poc of aws lambda using rust
 This project is an attempt to proof concept of building serverless application in Rust programming language.
 
-Clone this project
-```bash
-git clone git@github.com:runahr/aws-rust-poc.git
-```
-
-And then proceed with dependencies.
-
 ## Dependencies:
 Project relies on **rust** itself (which comes with **cargo**, its package manager and command tool), **cargo lambda** crate, **AWS CLI** and **AWS SAM** for setting up local environment and deployment, **docker** for building local images of app for *aws sam* to work as well as local development DB.
 
