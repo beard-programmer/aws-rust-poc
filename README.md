@@ -93,8 +93,17 @@ Having those keys, configure yourself an aws profile. In scripts and configs we 
 ```bash
 $ aws configure --profile aws-rust-poc
 ```
-Enter `Access Key ID`, `AWS Secret Access Key`, `Default region name` and `Default output format`
-You can verify profile successfully added by printing it in terminal:
+```
+AWS Access Key ID:<YOUR_PUBLIC_ACCESS_KEY_ID>
+AWS Secret Access Key: <YOUR_PRIVATE_SECRET_ACCESS_KEY>
+Default region name: us-west-2
+Default output format: json
+```
+<details>
+<summary>
+Verify profile configuration:
+</summary>
+
 ```bash
 $ cat ~/.aws/credentials
 ```
@@ -103,6 +112,7 @@ $ cat ~/.aws/credentials
 aws_access_key_id = <YOUR_PUBLIC_ACCESS_KEY_ID>
 aws_secret_access_key = <YOUR_PRIVATE_SECRET_ACCESS_KEY>
 ```
+</details>
 
 Now AWS CLI is configured, and we can proceed with installation of AWS SAM CLI.
 
