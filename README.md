@@ -15,7 +15,13 @@ Install Rust, by running this command in your terminal:
 $ curl https://sh.rustup.rs -sSf | sh
 ```
 Just follow CLI helper and install everything with default settings. It will install both Rust language and Cargo tool.
+
+
+<details>
+<summary>
 Verify installation:
+</summary>
+
 ```bash
 $ which rustc
 ```
@@ -40,6 +46,8 @@ $ cargo --version
 ```
 cargo 1.67.1 (8ecd4f20a 2023-01-10)
 ```
+</details>
+
 ### Cargo lambda
 Next you need to install [cargo lambda](https://www.cargo-lambda.info/guide/what-is-cargo-lambda.html).
 Here is command for installation via [homebrew](https://brew.sh/) package manager.
@@ -58,7 +66,12 @@ AWS CLI installer takes care of arm/x64 differences, just download and run insta
 $ curl "https://awscli.amazonaws.com/AWSCLIV2.pkg" -o "AWSCLIV2.pkg"
 $ sudo installer -pkg AWSCLIV2.pkg -target /
 ```
-Verify installation, it should be something like:
+
+<details>
+<summary>
+Verify installation:
+</summary>
+
 ```bash
 $ which aws
 ```
@@ -72,6 +85,7 @@ $ aws --version
 aws-cli/2.10.4 Python/3.9.11 Darwin/22.3.0 exe/x86_64 prompt/off
 ```
 **Note**: output will be different depending on your OS and CPU architecture.
+</details>
 
 #### Configure AWS CLI
 Log into aws web console, open IAM and create yourself a pair of keys: public `access key ID` and `secret access key`. Detailed instruction is found [here](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-prereqs.html).
@@ -98,7 +112,10 @@ For Mac users AWS SAM CLI is available via homebrew.
 ```bash
 $ brew install aws/tap/aws-sam-cli
 ```
-Verify installation.
+
+<details>
+<summary>Verify installation:</summary>
+
 ```bash
 $ which sam
 ```
@@ -111,6 +128,7 @@ $ sam --version
 ```
 SAM CLI, version 1.75.0
 ```
+</details>
 
 ### Docker
 For docker installation please follow [official website](https://docs.docker.com/desktop/install/mac-install/).
@@ -140,11 +158,17 @@ Run the docker compose in console in daemon mode:
 ```bash
 $ docker compose up -d
 ```
-List containers:
+
+
+<details>
+<summary>Other usefull commands:
+</summary>
+
+List containers running
 ```bash
 $ docker compose ps
 ```
-To shut down container
+Shut down container
 ```bash
 $ docker compose down #
 ```
@@ -152,6 +176,7 @@ To shut down container and remove volumes - persisted databases and tables.
 ```bash
 $ docker compose down -v
 ```
+</details>
 
 ### Importing DB dump
 Next you need to import dump from development/stating environment.
