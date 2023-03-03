@@ -21,28 +21,29 @@ Parameters:
     ConstraintDescription: Must end with non-numeric character.
 Mappings:
   EnvironmentVariables:
-    dev:
-      DatabaseUrl: ''
-    staging:
-      DatabaseUrl: '{{resolve:ssm:alana-auroradb-dev}}'
-    prod:
-      DatabaseUrl: '{{resolve:ssm:alana-auroradb-prod}}'
+    databaseUrl:
+      dev: AWS::NoValue
+      staging: '{{resolve:ssm:alana-auroradb-dev}}'
+      prod: '{{resolve:ssm:alana-auroradb-prod}}'
   VpcConfigs:
-    dev:
-      SecurityGroupIds:
+    SecurityGroupIds:
+      dev:
         - AWS::NoValue
-      SubnetIds:
-        - AWS::NoValue
-    staging:
-      SecurityGroupIds:
+      staging:
         - sg-0d47cafade807bc33
-      SubnetIds:
-        - subnet-2b511c52
-    prod:
-      SecurityGroupIds:
+      prod:
         - sg-0f0aac8dbce34ab1e
-      SubnetIds:
+    SubnetIds:
+      dev:
+        - AWS::NoValue
+      staging:
+        - subnet-2b511c52
+      prod:
         - subnet-99541de0
+  CognitoUserPoolsArn:
+    recruitersUserPool:
+      staging: arn:aws:cognito-idp:us-west-2:524471632441:userpool/us-west-2_U87MvYGL8
+      prod: arn:aws:cognito-idp:us-west-2:524471632441:userpool/us-west-2_eFd9n15Jf
 Resources:
   AwsRustPocApi:
     Type: AWS::Serverless::Api
@@ -53,7 +54,7 @@ Resources:
         DefaultAuthorizer: RecruiterCognitoAuth # OPTIONAL
         Authorizers:
           RecruiterCognitoAuth:
-            UserPoolArn: arn:aws:cognito-idp:us-west-2:524471632441:userpool/us-west-2_U87MvYGL8 # Can also accept an array
+            UserPoolArn: !FindInMap [ CognitoUserPoolsArn, recruitersUserPool, !Ref EnvName ]
             Identity: # OPTIONAL
               Header: Authorization # OPTIONAL; Default: 'Authorization'
   PingLambda:
@@ -90,10 +91,10 @@ Resources:
               Authorizer: RecruiterCognitoAuth
       Environment:
         Variables:
-          DATABASE_URL: !FindInMap [ EnvironmentVariables, !Ref EnvName, DatabaseUrl ]
+          DATABASE_URL: !FindInMap [ EnvironmentVariables, databaseUrl, !Ref EnvName ]
       VpcConfig:
-        SecurityGroupIds: !FindInMap [ VpcConfigs, !Ref EnvName, SecurityGroupIds ]
-        SubnetIds: !FindInMap [ VpcConfigs, !Ref EnvName, SubnetIds ]
+        SecurityGroupIds: !FindInMap [ VpcConfigs, SecurityGroupIds, !Ref EnvName ]
+        SubnetIds: !FindInMap [ VpcConfigs, SubnetIds, !Ref EnvName ]
   ApplicationResourceGroup:
     Type: AWS::ResourceGroups::Group
     Properties:
