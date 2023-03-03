@@ -1,4 +1,36 @@
 # Poc of aws lambda using rust
+This project is an attempt to proof concept of building serverless application in Rust programming language.
+
+Clone this project
+```bash
+git clone git@github.com:runahr/aws-rust-poc.git
+```
+
+And then proceed with dependencies.
+
+## Dependencies:
+Project relies on **rust** itself (which comes with **cargo**, its package manager and command tool), **cargo lambda** crate, **AWS CLI** and **AWS SAM** for setting up local environment and deployment, **docker** for building local images of app for *aws sam* to work as well as local development DB.
+
+### Rust
+Install [Rust](https://doc.rust-lang.org/cargo/getting-started/installation.html), by running this command in your terminal:
+```bash
+curl https://sh.rustup.rs -sSf | sh
+```
+Just follow CLI helper and install everything with default settings. After verify you have installed:
+```
+which rustc
+rustc --version
+which cargo
+cargo --version
+```
+### Cargo lambda
+Next you need to install [cargo lambda](https://www.cargo-lambda.info/guide/what-is-cargo-lambda.html).
+Here is command for installation via [homebrew](https://brew.sh/) package manager.
+```bash
+brew tap cargo-lambda/cargo-lambda
+brew install cargo-lambda
+```
+Alternative ways to install cargo lambda can be found [here](https://www.cargo-lambda.info/guide/installation.html#with-nix).
 
 1. Install rust
 2. Install cargo
